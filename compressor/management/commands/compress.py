@@ -291,9 +291,20 @@ class Command(NoArgsCommand):
 
     def get_nodelist(self, node):
         # Check if node is an ```if``` switch with true and false branches
-        if hasattr(node, 'nodelist_true') and hasattr(node, 'nodelist_false'):
-            return node.nodelist_true + node.nodelist_false
-        return getattr(node, "nodelist", [])
+        nodes = []
+
+        nodelist_true = getattr(node, 'nodelist_true', None)
+        if nodelist_true:
+            nodes.append(nodelist_true)
+
+        nodelist_false = getattr(node, 'nodelist_false', None)
+        if nodelist_false:
+            nodes.append(nodelist_false)
+
+        if nodes:
+            return nodes
+        else:
+            return getattr(node, "nodelist", [])
 
     def walk_nodes(self, node, block_name=None):
         for node in self.get_nodelist(node):
